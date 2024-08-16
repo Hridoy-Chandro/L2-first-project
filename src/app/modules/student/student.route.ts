@@ -7,11 +7,11 @@ const router = express.Router();
 
 // will call controller func
 
-router.get('/:studentId', StudentControllers.getSingleStudent);
+router.get('/:id', StudentControllers.getSingleStudent);
 
-router.delete('/:studentId', StudentControllers.deleteStudent);
+router.delete('/:id', StudentControllers.deleteStudent);
 
-router.patch('/:studentId',
+router.patch('/:id',
     validateRequest(updateStudentValidationSchema),
     StudentControllers.updatedStudent);
 
