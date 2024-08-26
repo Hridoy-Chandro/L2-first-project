@@ -42,8 +42,6 @@ const userSchema = new Schema<TUser>(
 
 
 
-
-
 // pre save middleware / hook : will work on create () and save ()
 userSchema.pre('save', async function (next) {
   // console.log(this, 'pre hook : we will save the data');

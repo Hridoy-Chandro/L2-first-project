@@ -9,6 +9,7 @@ import { TFaculty } from './faculty.interface';
 import { Faculty } from './faculty.model';
 import QueryBuilder from '../../builder/queryBuilder';
 
+
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(
     Faculty.find().populate('academicDepartment'),

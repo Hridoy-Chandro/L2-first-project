@@ -5,6 +5,7 @@ import { updateFacultyValidationSchema } from './faculty.validation';
 
 const router = express.Router();
 
+
 router.get('/:id', FacultyControllers.getSingleFaculty);
 
 router.patch(
