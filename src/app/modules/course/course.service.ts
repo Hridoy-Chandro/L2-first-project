@@ -23,7 +23,8 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
     .fields();
 
   const result = await courseQuery.modelQuery;
-  return result;
+  const meta = await courseQuery.countTotal();
+  return { meta, result };
 };
 
 const getSingleCourseFromDB = async (id: string) => {
@@ -136,7 +137,7 @@ const assignFacultiesWithCourseIntoDB = async (
   const result = await CourseFaculty.findByIdAndUpdate(
     id,
     {
-      course : id,
+      course: id,
       $addToSet: { faculties: { $each: payLoad } },
     },
     {
@@ -154,7 +155,7 @@ const removeFacultiesFromCourseFromDB = async (
   const result = await CourseFaculty.findByIdAndUpdate(
     id,
     {
-      $pull: {faculties: {$in: payLoad} },
+      $pull: { faculties: { $in: payLoad } },
     },
     {
       new: true,
@@ -170,5 +171,5 @@ export const CourseServices = {
   deleteCourseFromDB,
   updateCourseIntoDB,
   assignFacultiesWithCourseIntoDB,
-  removeFacultiesFromCourseFromDB
+  removeFacultiesFromCourseFromDB,
 };

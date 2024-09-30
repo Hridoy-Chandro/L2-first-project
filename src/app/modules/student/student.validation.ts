@@ -17,7 +17,7 @@ const createLocalGuardianValidationSchema = z.object({
 // Define schema for the main Student model
 export const createStudentValidationSchema = z.object({
   body: z.object({
-    password: z.string().max(20),
+    password: z.string().max(20).optional(),
     student: z.object({
       name: createUserNameValidationSchema,
       gender: z.enum(['male', 'female', 'Others']),

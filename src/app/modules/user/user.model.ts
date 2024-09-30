@@ -1,23 +1,33 @@
+/* eslint-disable @typescript-eslint/no-this-alias */
 import { model, Schema } from 'mongoose';
-import { TUser } from './user.interface';
+import { TUser, UserModel } from './user.interface';
 import config from '../../config';
 import bcrypt from 'bcryptjs';
-
+import { UserStatus } from './user.constant';
 
 const userSchema = new Schema<TUser>(
   {
     id: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
     password: {
       type: String,
       required: true,
+      select: 0,
     },
     needsPasswordChange: {
       type: Boolean,
       default: true,
+    },
+    passwordChangeAt: {
+      type: Date,
     },
     role: {
       type: String,
@@ -25,8 +35,8 @@ const userSchema = new Schema<TUser>(
     },
     status: {
       type: String,
-      enum: ['in-progress', 'blocked'],
-      default: 'in-progress'
+      enum: UserStatus,
+      default: 'in-progress',
     },
     isDeleted: {
       type: Boolean,
@@ -37,10 +47,6 @@ const userSchema = new Schema<TUser>(
     timestamps: true,
   },
 );
-
-
-
-
 
 // pre save middleware / hook : will work on create () and save ()
 userSchema.pre('save', async function (next) {
@@ -54,20 +60,30 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-
 // set '' after saving password
 userSchema.post('save', function (doc, next) {
   doc.password = '';
   next();
 });
 
+userSchema.statics.isUserExistsByCustomId = async function (id: string) {
+  return await User.findOne({ id }).select('+password');
+};
 
+userSchema.statics.isPasswordMatched = async function (
+  plainTextPassword,
+  hashedPassword,
+) {
+  return await bcrypt.compare(plainTextPassword, hashedPassword);
+};
 
+userSchema.statics.isJWTIssuedBeforePasswordChanged = function (
+  passwordChangedTimestamp: Date,
+  isJWTIssuedTimestamp: number,
+) {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
+  return passwordChangedTime > isJWTIssuedTimestamp;
+};
 
-
-export const User = model<TUser>('User', userSchema);
-
-
-
-
-
+export const User = model<TUser, UserModel>('User', userSchema);

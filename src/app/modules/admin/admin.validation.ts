@@ -26,6 +26,7 @@ export const createAdminValidationSchema = z.object({
   }),
 });
 
+
 const updateUserNameValidationSchema = z.object({
   firstName: z.string().min(3).max(20).optional(),
   middleName: z.string().min(3).max(20).optional(),

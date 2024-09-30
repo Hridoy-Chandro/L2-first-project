@@ -7,7 +7,6 @@ import {
   TUserName,
 } from './student.interface';
 
-
 const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
@@ -31,9 +30,6 @@ const userNameSchema = new Schema<TUserName>({
   },
 });
 
-
-
-
 const localGuardianSchema = new Schema<TLocalGuardian>({
   name: { type: String, required: true },
   occupation: { type: String, required: true },
@@ -41,68 +37,64 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   address: { type: String, required: true },
 });
 
-
-const StudentSchema = new Schema<TStudent, StudentModel>({
-  id: { type: String, required: [true, 'ID is required'], unique: true },
-  user: {
-    type: Schema.Types.ObjectId,
-    required: [true, 'User id is required'],
-    unique: true,
-    ref: 'User',
-  },
-  name: userNameSchema,
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'others'],
-      message:
-        "The gender field can only be one of the following: 'male', 'female' or 'other' ",
+const StudentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: { type: String, required: [true, 'ID is required'], unique: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required'],
+      unique: true,
+      ref: 'User',
     },
-    required: true,
+    name: userNameSchema,
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'others'],
+        message:
+          "The gender field can only be one of the following: 'male', 'female' or 'other' ",
+      },
+      required: true,
+    },
+    dateOfBirth: { type: String },
+    email: { type: String, required: true, unique: true },
+    contactNo: { type: String, required: true },
+    emergencyContactNo: { type: String, required: true },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    },
+    presentAddress: { type: String, required: true },
+    permanentAddress: { type: String, required: true },
+    profileImg: { type: String },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester',
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicDepartment',
+    },
   },
-  dateOfBirth: { type: String },
-  email: { type: String, required: true, unique: true },
-  contactNo: { type: String, required: true },
-  emergencyContactNo: { type: String, required: true },
-  bloodGroup: {
-    type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+  {
+    toJSON: {
+      virtuals: true,
+    },
   },
-  presentAddress: { type: String, required: true },
-  permanentAddress: { type: String, required: true },
-  profileImg: { type: String },
-  admissionSemester: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicSemester',
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: true,
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-  academicDepartment: {
-    type: Schema.Types.ObjectId,
-    ref: 'AcademicDepartment'
-  }
-},
-{
-  toJSON: {
-    virtuals: true,
-  }
-}
 );
 
-
-// virtual 
-StudentSchema.virtual('fullName').get(function() {
-  return (
-    `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`
-  )
+// virtual
+StudentSchema.virtual('fullName').get(function () {
+  return `${this?.name?.firstName} ${this?.name?.middleName} ${this?.name?.lastName}`;
 });
-
 
 // // creating a custom static method
 // StudentSchema.methods.isUserExists = async function (id: string) {
@@ -116,11 +108,10 @@ StudentSchema.pre('find', function (next) {
   next();
 });
 
-
 StudentSchema.pre('findOne', function (next) {
-  this.find({isDeleted: {$ne: true}});
+  this.find({ isDeleted: { $ne: true } });
   next();
-})
+});
 
 StudentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
@@ -132,9 +123,6 @@ StudentSchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Student.findOne({ id });
   return existingUser;
 };
-
-
-
 
 // creating a custom instance method
 

@@ -23,7 +23,7 @@ const getAllOfferedCourses = catchAsync(async (req: Request, res: Response) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'OfferedCourses retrieved successfully !',
+      message: 'Offered Courses retrieved successfully !',
       data: result,
     });
 });
@@ -36,7 +36,7 @@ const getSingleOfferedCourses = catchAsync(
       sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'OfferedCourse fetched successfully',
+        message: 'Offered Course fetched successfully',
         data: result,
       });
   },

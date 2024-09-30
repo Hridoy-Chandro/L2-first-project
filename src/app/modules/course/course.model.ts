@@ -33,7 +33,7 @@ const courseSchema = new Schema<TCourse>({
     trim: true,
     required: true,
   },
-  credit: {
+  credits: {
     type: Number,
     trim: true,
     required: true,

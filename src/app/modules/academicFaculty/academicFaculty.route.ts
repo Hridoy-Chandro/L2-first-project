@@ -2,6 +2,7 @@ import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { AcademicFacultyValidation } from './academicFaculty.validation';
 import { AcademicFacultyControllers } from './academicFaculty.controller';
+import auth from '../Auth/auth';
 
 const router = express.Router();
 
@@ -18,7 +19,7 @@ router.patch('/:facultyId', validateRequest(AcademicFacultyValidation.updateAcad
     AcademicFacultyControllers.updateAcademicFaculty
 );
 
-router.get('/', AcademicFacultyControllers.getAllAcademicFaculties);
+router.get('/', auth(), AcademicFacultyControllers.getAllAcademicFaculties);
 
 
 export const AcademicFacultyRoutes = router;
